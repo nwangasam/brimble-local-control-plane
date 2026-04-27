@@ -249,7 +249,7 @@ The next highest-value automated tests to keep expanding are:
 
 The repo includes a separate feedback document for the Brimble-hosted deployment requirement:
 
-- [BRIMBLE_FEEDBACK.md](/Users/mac/Desktop/dev/jobs/brimble-jobs/BRIMBLE_FEEDBACK.md:1)
+- [BRIMBLE_FEEDBACK.md](./BRIMBLE_FEEDBACK.md)
 
 That write-up covers the deployed starter app, the platform URL, the confusion around deployment type classification, and the main product UX improvements I would suggest.
 
