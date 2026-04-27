@@ -139,6 +139,21 @@ The verifier:
 - validates SSE activity
 - confirms the Caddy route is reachable
 
+### Sample Apps
+
+The repo includes a few small sample applications under `sample-apps/` to test different deployment shapes locally:
+
+- `hello-node`
+  - minimal Node HTTP app
+- `hello-express`
+  - Express-based web service
+- `hello-fastify`
+  - Fastify-based JSON service
+- `hello-static`
+  - simple static-style page served by a tiny Node process for upload testing
+
+These are useful for creating local `.zip` uploads or for trying additional Git-based deploy scenarios from forks of similar public repos.
+
 ### Useful Commands
 
 ```bash
@@ -230,7 +245,14 @@ The next highest-value automated tests to keep expanding are:
 - no advanced design system work
 - no production-grade control plane concerns before the local pipeline is airtight
 
+## Brimble Platform Feedback
+
+The repo includes a separate feedback document for the Brimble-hosted deployment requirement:
+
+- [BRIMBLE_FEEDBACK.md](/Users/mac/Desktop/dev/jobs/brimble-jobs/BRIMBLE_FEEDBACK.md:1)
+
+That write-up covers the deployed starter app, the platform URL, the confusion around deployment type classification, and the main product UX improvements I would suggest.
+
 ## Notes
 
 - first-time Railpack builds can be slow because builder/runtime images must be fetched
-- this repo currently lives inside a larger parent git workspace on this machine; before submission it should be moved into its own standalone git repository root
