@@ -1,0 +1,11 @@
+:80 {
+  handle /api/* {
+    reverse_proxy api:3001
+  }
+
+  import /etc/caddy/generated/*.caddy
+
+  handle {
+    reverse_proxy web:3000
+  }
+}

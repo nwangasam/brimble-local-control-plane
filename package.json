@@ -1,0 +1,12 @@
+{
+  "name": "brimble-jobs",
+  "private": true,
+  "packageManager": "pnpm@10.18.3",
+  "scripts": {
+    "dev:api": "pnpm --filter @brimble/api dev",
+    "build:api": "pnpm --filter @brimble/api build",
+    "typecheck:api": "pnpm --filter @brimble/api typecheck",
+    "test:api": "pnpm --filter @brimble/api test",
+    "verify:stack": "node scripts/verify-live-stack.mjs"
+  }
+}

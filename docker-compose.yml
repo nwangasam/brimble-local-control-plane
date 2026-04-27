@@ -1,0 +1,80 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: brimble-web
+    networks:
+      - brimble
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: brimble-api
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3001
+      DATA_DIR: /data
+      CADDY_GENERATED_DIR: /caddy-generated
+      CADDY_PUBLIC_BASE_URL: http://caddy
+      CADDY_RELOAD_COMMAND: docker exec brimble-caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+      PIPELINE_MODE: live
+      BUILDKIT_HOST: tcp://buildkit:1234
+      DOCKER_NETWORK: brimble
+      DEPLOYMENT_TARGET_PORT: 3000
+    volumes:
+      - api-data:/data
+      - caddy-generated:/caddy-generated
+      - /var/run/docker.sock:/var/run/docker.sock
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    depends_on:
+      buildkit:
+        condition: service_started
+      caddy:
+        condition: service_started
+      web:
+        condition: service_started
+    networks:
+      - brimble
+
+  caddy:
+    image: caddy:2.10.2
+    container_name: brimble-caddy
+    ports:
+      - "8080:80"
+      - "2019:2019"
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-generated:/etc/caddy/generated
+      - caddy-data:/data
+      - caddy-config:/config
+    command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+    networks:
+      - brimble
+
+  buildkit:
+    image: moby/buildkit:buildx-stable-1
+    container_name: brimble-buildkit
+    privileged: true
+    command: ["--addr", "tcp://0.0.0.0:1234"]
+    volumes:
+      - buildkit-state:/var/lib/buildkit
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      - brimble
+
+volumes:
+  api-data:
+  caddy-generated:
+  caddy-data:
+  caddy-config:
+  buildkit-state:
+
+networks:
+  brimble:
+    name: brimble

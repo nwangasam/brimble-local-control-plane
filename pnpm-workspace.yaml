@@ -1,0 +1,5 @@
+packages:
+  - apps/*
+  - packages/*
+
+storeDir: /Users/mac/Library/pnpm/store/v10
