@@ -1,110 +1,58 @@
 # Brimble Deploy Feedback
 
-Use this file for the separate Brimble deployment requirement. Keep the feedback concrete, product-facing, and evidence-based.
-
-The strongest version of this document reads like field notes from actually using the platform, not generic praise.
-
 ## Deployment
 
 - Date: 2026-04-27
 - App deployed: `nodejs-getting-started`
-- Brimble deployment URL: Pending final successful deploy URL
-- Repo or source used: `https://github.com/nwangasam/nodejs-getting-started`
-- Approximate deployment duration: Multi-minute deploy attempt based on the deployment history screenshots
-- Deployment type: `Git`
-
-Note:
-
-- The feedback below is based on actual product screenshots and operator observations.
-- A few points are marked as inference where the UI suggested behavior but the screenshot alone did not prove the exact internal cause.
+- Brimble deploy URL: `https://nodejs-getting-started.brimble.app/`
+- Repo used: `https://github.com/nwangasam/nodejs-getting-started`
+- Deployment type used: Git-based deploy
 
 ## What Went Smoothly
 
-Focus on steps that were fast, clear, or confidence-inspiring.
-
-- Connecting GitHub and selecting the repository appears straightforward. The repo picker and project creation entry point are easy to find.
-- The project creation form exposes the major setup knobs in one place: branch, root directory, framework, build command, install command, output directory, and secrets.
-- Deployment history is visually accessible from the project view, and there is at least a clear path to inspect historical attempts and open raw logs.
+- Connecting GitHub and selecting the repository was straightforward.
+- The project creation flow looked credible and product-like from the start.
+- Deployment history and logs were accessible from the project view.
+- I was able to get a public Brimble-hosted URL for the app.
 
 ## Friction Points
 
-Focus on moments where you had to slow down, retry, guess, or inspect extra information.
-
-Useful prompts:
-
-- Was any step slower than expected without enough feedback?
-- Did any label, status, or button feel ambiguous?
-- Did you have to infer what the platform was doing?
-
-- The deploy setup mixed `Node.js` detection with static-site concepts like `Output directory: dist` and `Build command: npm run build`. For a server-style starter app, that immediately created uncertainty about whether the platform had classified the project correctly.
-- I could not quickly tell whether the failure was caused by the project type, the build configuration, the runtime model, or missing environment configuration. The UI exposed many settings, but not enough guidance about which ones were actually required for this repo shape.
-- The separation between deployment record, build phase, runtime phase, logs, and variables was not obvious. The interface felt more like one long deployment surface than a clearly staged pipeline.
+- The biggest source of confusion was deploy type classification. I was deploying a simple Node.js starter app, but the setup flow still looked oriented toward a static-site model.
+- The form exposed fields like output directory and frontend-style build assumptions at the same time that the framework was detected as `Node.js`, which reduced confidence in whether the platform had classified the project correctly.
+- I could not quickly tell whether a problem was caused by deploy type, build configuration, runtime configuration, or missing environment setup.
+- The separation between deployment history, build logs, runtime behavior, and variables was not clear enough for a first-time operator.
 
 ## Bugs Or Confusing Behavior
 
-Write these as specific observations.
-
-Good format:
-
-- "I did X, expected Y, but saw Z."
-- "The deploy appeared healthy, but the route was not yet reachable."
-- "The UI reported success before logs made that believable."
-
-- I selected a public Node.js starter repository that works in my local control plane, expected a conventional Node deploy path, but the setup form still looked oriented toward a static-site deployment. That made the deploy type feel ambiguous before the deploy even started.
-- I expected to be able to distinguish build failure from runtime failure quickly, but the deployment history and log views did not make that boundary clear enough. I had to infer too much from the combined log stream.
-- I expected the active variables/secrets context for the deployment to be more visible while debugging. From the screenshots, it was not obvious which secrets applied to the failing deployment or whether the failure was related to config versus code.
+- I deployed a public Node.js starter repository that works in my own local control plane, but Brimble’s setup flow still made it feel like I was configuring a static site unless I upgraded access to change the site type.
+- I expected to distinguish build failure from runtime failure quickly, but the deployment history and log views did not make that boundary obvious enough.
+- I expected variables and deploy configuration to be more visible from the active deployment context while debugging.
 
 ## Missing Features Or Product Gaps
 
-Focus on missing pieces that would have reduced uncertainty or manual debugging.
-
-Examples:
-
-- clearer build-progress visibility
-- stronger error classification
-- route/readiness verification feedback
-- easier access to raw build logs
-- deployment history and rollback hints
-
-- A clearer distinction between project types up front: static site, Node server, container/image deploy, database, and so on.
-- Stronger phase separation in the deploy UI: source import, build, release/deploy, runtime health, and logs should feel like different stages rather than one blended activity stream.
-- Better deployment-context visibility: show the effective branch, root directory, build command, start/runtime model, and variables used for the currently selected deployment.
-- A tighter failure summary near the top of the deployment view so the operator does not need to scroll raw logs first to understand what kind of failure occurred.
+- A clearer distinction between deployment types up front: static site, Node.js web service, container/image deploy, database, and so on.
+- Stronger phase separation in the deployment experience: source import, build, release, runtime health, and logs should feel like distinct stages.
+- Better visibility into the effective deployment context: branch, root directory, build command, runtime model, and variables for the selected deployment.
+- A tighter failure summary near the top of the deployment view so the operator does not have to read the full raw log stream first.
 
 ## What I Would Change
 
-Prioritize the changes by impact.
+1. Add explicit deployment-mode guidance and validation before the first deploy.
+   - This would reduce the chance that a server app is configured with static-site assumptions or vice versa.
+   - For a first-time operator, the biggest trust signal is whether the platform clearly understands the repo shape before the deploy starts.
 
-Recommended format:
+2. Split build, deploy, and runtime into more visible phases.
+   - This would make it easier to answer “what stage failed?” immediately.
+   - Faster failure classification would make the platform much easier to debug and trust.
 
-1. Highest-value product or DX improvement
-2. What problem it solves
-3. Why it matters for a first-time operator
-
-- Add explicit deployment-mode guidance and validation before the first deploy.
-  - Problem solved: It reduces the chance that a server app is configured with static-site assumptions or vice versa.
-  - Why it matters: First-time operators need confidence that the platform understands the repo before they spend time debugging a bad default.
-
-- Split the deployment experience into visible phases.
-  - Problem solved: It becomes easier to answer “did build fail, did release fail, or did runtime fail?”
-  - Why it matters: Debugging speed depends heavily on fast failure classification.
-
-- Make deployment context and variables visible from the deployment record itself.
-  - Problem solved: Operators can verify the exact config that produced a given failure without jumping between unrelated tabs.
-  - Why it matters: In deployment products, most confusion comes from config drift and hidden assumptions, not only from app code.
+3. Surface deployment context and variables from the deployment record itself.
+   - Operators should not need to jump between multiple tabs to confirm the config that produced a failure.
+   - A deployment product becomes much easier to reason about when config, logs, and deploy status are connected in one place.
 
 ## Overall Assessment
 
-Keep this direct. The take-home explicitly rewards honest feedback more than polite generic praise.
+Brimble already feels like a real platform rather than a toy deploy tool. The repo import and project setup flow are visually credible, and the deployment history view suggests the right product direction.
 
-Suggested framing:
+The main weakness I ran into was clarity. I did not feel fully confident about the system’s mental model when deploying a simple public Node.js starter app. The interface exposed useful controls, but it did not clearly explain whether I was configuring a static site, a server app, or some hybrid build path. That ambiguity made the failure harder to reason about than it should have been.
 
-- what felt strong
-- what created uncertainty
-- whether you would trust the current deploy experience for repeated use
-
-The strongest part of the experience is that Brimble already looks and feels like a real platform rather than a toy deploy tool. The repo import and project setup flow are visually credible, and the deployment history view suggests the right product direction.
-
-The main weakness is clarity. I did not feel confident about the system’s mental model when deploying a simple public Node.js starter. The interface exposed many controls, but it did not clearly explain whether I was configuring a static site, a server app, or some hybrid build path. That ambiguity made the failure harder to reason about than it should have been.
-
-I would trust the platform direction, but not yet the deploy ergonomics for a first-time operator. The biggest opportunity is not more features. It is sharper separation of deployment type, deployment phase, and deployment configuration so the operator can form the right mental model quickly.
+I trust the direction of the product, but I think first-time deploy ergonomics and deploy-type clarity are the biggest opportunities to improve.
