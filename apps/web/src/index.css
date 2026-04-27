@@ -1,10 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Lora:ital,wght@1,500;1,600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Lora:ital,wght@1,500;1,600&display=swap");
 @import "tailwindcss";
 
 :root {
   --font-sans: "IBM Plex Sans", "Geist Variable", "Segoe UI", sans-serif;
   --font-heading: "Lora", Georgia, serif;
-  --font-mono: "Geist Variable", "IBM Plex Sans", monospace;
+  --font-mono: "IBM Plex Mono", "Geist Variable", monospace;
 
   --brimble-black: #222528;
   --brimble-air-gray: #fafafa;
@@ -16,7 +16,7 @@
     0px 2.5px 3.3px #00000040;
   --shadow-button: 0px 0.646px 1.292px #1212170d;
 
-  --radius: 0.625rem;
+  --radius: 0.125rem;
   --background: oklch(100% 0 0);
   --foreground: oklch(14.5% 0 0);
   --card: oklch(100% 0 0);

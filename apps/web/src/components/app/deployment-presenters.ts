@@ -10,9 +10,9 @@ export const statusTone: Record<DeploymentStatus, string> = {
 
 export const statusCopy: Record<DeploymentStatus, string> = {
   pending: "Queued for execution",
-  building: "Railpack is producing the image",
-  deploying: "Docker and Caddy are being updated",
-  running: "Route is live behind Caddy",
+  building: "Build in progress",
+  deploying: "Release in progress",
+  running: "Live",
   failed: "Pipeline stopped with an error",
 }
 
@@ -35,6 +35,28 @@ export function toneForStream(stream: DeploymentStream) {
   }
 }
 
+export function formatPhaseLabel(phase: DeploymentLog["phase"]) {
+  switch (phase) {
+    case "build":
+      return "Build"
+    case "deploy":
+      return "Deploy"
+    case "runtime":
+      return "Runtime"
+  }
+}
+
+export function formatStreamLabel(stream: DeploymentStream) {
+  switch (stream) {
+    case "stdout":
+      return "Output"
+    case "stderr":
+      return "Error"
+    case "system":
+      return "System"
+  }
+}
+
 export function mergeLogs(logs: DeploymentLog[]) {
   const unique = new Map<string, DeploymentLog>()
   for (const log of logs) {
@@ -47,7 +69,9 @@ export function mergeLogs(logs: DeploymentLog[]) {
 }
 
 export function formatLogTime(value: string) {
-  return new Date(value).toLocaleTimeString([], {
+  return new Date(value).toLocaleString([], {
+    month: "short",
+    day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -61,4 +85,24 @@ export function formatDeploymentTime(value: string) {
     hour: "2-digit",
     minute: "2-digit",
   })
+}
+
+export function formatRelativeTime(value: string) {
+  const now = Date.now()
+  const target = new Date(value).getTime()
+  const diff = target - now
+  const minute = 60_000
+  const hour = 60 * minute
+  const day = 24 * hour
+  const rtf = new Intl.RelativeTimeFormat([], { numeric: "auto" })
+
+  if (Math.abs(diff) < hour) {
+    return rtf.format(Math.round(diff / minute), "minute")
+  }
+
+  if (Math.abs(diff) < day) {
+    return rtf.format(Math.round(diff / hour), "hour")
+  }
+
+  return rtf.format(Math.round(diff / day), "day")
 }

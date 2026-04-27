@@ -4,7 +4,10 @@ import type { Deployment, DeploymentLog } from "@/api"
 import { EmptyState } from "@/components/app/empty-state"
 import { Fact } from "@/components/app/fact"
 import {
+  formatDeploymentTime,
   formatLogTime,
+  formatPhaseLabel,
+  formatStreamLabel,
   statusCopy,
   statusTone,
   toneForStream,
@@ -30,11 +33,9 @@ export function DeploymentDetail(props: {
               <Logs className="size-5 text-primary" />
               {deployment ? deployment.id : "Selected deployment"}
             </CardTitle>
-            <CardDescription className="mt-1">
-              {deployment
-                ? statusCopy[deployment.status]
-                : "Select a deployment to inspect build progress, runtime, and logs."}
-            </CardDescription>
+            {deployment ? (
+              <CardDescription className="mt-1">{statusCopy[deployment.status]}</CardDescription>
+            ) : null}
           </div>
           {deployment ? (
             <div className="flex items-center gap-2">
@@ -44,7 +45,7 @@ export function DeploymentDetail(props: {
               <Badge
                 variant="outline"
                 className={cn(
-                  "rounded-full border-border/70 bg-background",
+                  "rounded-lg border-border/70 bg-background",
                   streamConnected && "border-[color:var(--success)] text-[color:var(--success-foreground)]"
                 )}
               >
@@ -73,34 +74,30 @@ export function DeploymentDetail(props: {
           />
         ) : (
           <>
-            <div className="grid gap-3 xl:grid-cols-3">
+            <div className="grid gap-3 xl:grid-cols-4">
+              <Fact title="Created" value={formatDeploymentTime(deployment.createdAt)} />
               <Fact title="Image tag" value={deployment.imageTag ?? "building…"} />
-              <Fact title="Container" value={deployment.containerName ?? "not started"} />
               <Fact title="Route" value={deployment.routePath ?? "pending"} />
+              <Fact title="Updated" value={formatDeploymentTime(deployment.updatedAt)} />
             </div>
 
             {deployment.routePath && deployment.status === "running" ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[color:var(--success)]/35 bg-[color:var(--success)]/10 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-[color:var(--success-foreground)]">Deployment is live</p>
-                  <p className="text-sm text-[color:var(--success-foreground)]/80">
-                    Open the routed app behind Caddy.
-                  </p>
-                </div>
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-[color:var(--success)]/35 bg-[color:var(--success)]/10 px-4 py-3">
+                <div className="text-sm font-medium text-[color:var(--success-foreground)]">Deployment is live</div>
                 <a
                   href={`${deployment.routePath}/`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-[color:var(--success)]/45 bg-background px-4 py-2 text-sm font-medium text-[color:var(--success-foreground)]"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--success)]/45 bg-background px-4 py-2 text-sm font-medium text-[color:var(--success-foreground)]"
                 >
-                  Open route
+                  Open
                   <ExternalLink className="size-4" />
                 </a>
               </div>
             ) : null}
 
             {deployment.failureReason ? (
-              <div className="rounded-[1.2rem] border border-destructive/25 bg-[color:var(--danger-surface)] px-4 py-3 text-sm text-[color:var(--danger-foreground)]">
+              <div className="rounded-md border border-destructive/25 bg-[color:var(--danger-surface)] px-4 py-3 text-sm text-[color:var(--danger-foreground)]">
                 {deployment.failureReason}
               </div>
             ) : null}
@@ -109,15 +106,12 @@ export function DeploymentDetail(props: {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-medium tracking-[0.02em]">Logs</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Historical rows plus the live SSE stream.
-                  </p>
                 </div>
-                <Badge variant="outline" className="rounded-full border-border/70 bg-background">
+                <Badge variant="outline" className="rounded-lg border-border/70 bg-background">
                   {logs.length} rows
                 </Badge>
               </div>
-              <ScrollArea className="h-[38rem] rounded-xl border border-border/70 bg-[color:var(--panel-strong)] p-0">
+              <ScrollArea className="h-[38rem] rounded-md border border-border/70 bg-[color:var(--panel-strong)] p-0">
                 <div className="space-y-0 px-4 py-4 font-mono text-xs text-[color:var(--panel-strong-foreground)]">
                   {logs.length === 0 ? (
                     <div className="py-10 text-center text-muted-foreground">
@@ -127,13 +121,16 @@ export function DeploymentDetail(props: {
                     logs.map((log) => (
                       <div
                         key={log.id}
-                        className="grid grid-cols-[auto_auto_1fr] gap-3 border-b border-white/6 py-2.5 last:border-b-0"
+                        className="grid grid-cols-[auto_auto_auto_1fr] gap-3 border-b border-white/6 py-2.5 last:border-b-0"
                       >
                         <span className="text-muted-foreground">
                           {formatLogTime(log.createdAt)}
                         </span>
+                        <span className="text-muted-foreground">
+                          {formatPhaseLabel(log.phase)}
+                        </span>
                         <span className={cn("uppercase", toneForStream(log.stream))}>
-                          {log.phase}.{log.stream}
+                          {formatStreamLabel(log.stream)}
                         </span>
                         <span className="whitespace-pre-wrap break-words">{log.message}</span>
                       </div>

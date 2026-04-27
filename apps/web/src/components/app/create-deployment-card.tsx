@@ -1,6 +1,7 @@
-import { FileArchive, GitBranch, LoaderCircle, Rocket } from "lucide-react"
+import { FileArchive, GitBranch, LoaderCircle, Rocket, Upload } from "lucide-react"
+import { useId, useRef } from "react"
 
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from "@/components/ui"
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input } from "@/components/ui"
 import { cn } from "@/lib/utils"
 
 function ModeButton({
@@ -19,7 +20,7 @@ function ModeButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex items-center justify-center gap-2 rounded-[1rem] px-3 py-3 text-sm font-medium transition-all",
+        "flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-medium transition-all",
         active
           ? "bg-background text-foreground shadow-(--shadow-button)"
           : "text-muted-foreground hover:bg-background/10 hover:text-foreground"
@@ -42,6 +43,8 @@ export function CreateDeploymentCard(props: {
   onFileChange: (file: File | null) => void
   onSubmit: () => void
 }) {
+  const uploadId = useId()
+  const uploadInputRef = useRef<HTMLInputElement | null>(null)
   const isSubmitDisabled =
     props.isPending ||
     (props.sourceMode === "git" ? props.gitUrl.trim().length === 0 : !props.selectedFile)
@@ -52,15 +55,12 @@ export function CreateDeploymentCard(props: {
         <div className="flex items-center justify-between gap-4">
           <div>
             <CardTitle>New deployment</CardTitle>
-            <CardDescription className="mt-1">
-              Launch from a Git repository or uploaded archive.
-            </CardDescription>
           </div>
-          <Badge variant="outline" className="rounded-full shadow-none">Pipeline</Badge>
+          <Badge variant="outline" className="rounded-lg shadow-none">Pipeline</Badge>
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-2 rounded-xl bg-muted/60 p-1">
+        <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted/60 p-1">
           <ModeButton
             active={props.sourceMode === "git"}
             icon={GitBranch}
@@ -82,42 +82,42 @@ export function CreateDeploymentCard(props: {
               value={props.gitUrl}
               onChange={(event) => props.onGitUrlChange(event.target.value)}
               placeholder="https://github.com/owner/repo"
-              className="border-border/70 bg-background"
+              className="rounded-lg border-border/70 bg-background"
             />
           </label>
         ) : (
           <label className="block space-y-2">
             <span className="text-sm text-foreground">Project archive</span>
-            <Input
+            <input
+              id={uploadId}
+              ref={uploadInputRef}
               type="file"
               accept=".zip"
               onChange={(event) => props.onFileChange(event.target.files?.[0] ?? null)}
-              className="border-border/70 bg-background text-foreground file:mr-4 file:border-0 file:bg-background file:px-3 file:py-1.5 file:text-sm file:text-foreground"
+              className="sr-only"
             />
-            <p className="text-xs text-muted-foreground">
-              Upload support is intentionally narrow: `.zip` only, per the project scope.
-            </p>
+            <button
+              type="button"
+              onClick={() => uploadInputRef.current?.click()}
+              className="flex w-full items-center justify-between rounded-lg border border-border/70 bg-background px-3 py-2.5 text-left transition-colors hover:bg-muted/30"
+            >
+              <span className="min-w-0 truncate text-sm text-foreground">
+                {props.selectedFile ? props.selectedFile.name : "Choose .zip file"}
+              </span>
+              <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                <Upload className="size-3.5" />
+                Browse
+              </span>
+            </button>
           </label>
         )}
 
-        <div className="rounded-xl border border-border/70 bg-muted/35 px-3 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Execution note</p>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            First-time Railpack builds may look quiet for a short period while builder and runtime
-            images are pulled.
-          </p>
-        </div>
-
         <div className="flex items-center justify-between gap-3">
-          <p className="max-w-xs text-xs leading-5 text-muted-foreground">
-            First build can look quiet while Railpack pulls its base images. The API now emits
-            verbose Railpack logs so the operator can see real progress.
-          </p>
           <Button
             size="lg"
             onClick={props.onSubmit}
             disabled={isSubmitDisabled}
-            className="rounded-full bg-primary px-5 text-primary-foreground hover:bg-primary/90"
+            className="rounded-lg bg-primary px-5 text-primary-foreground hover:bg-primary/90"
           >
             {props.isPending ? (
               <>

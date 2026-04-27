@@ -2,8 +2,8 @@ import { Package } from "lucide-react"
 
 import type { Deployment } from "@/api"
 import { EmptyState } from "@/components/app/empty-state"
-import { formatDeploymentTime, renderSourceLabel, statusTone } from "@/components/app/deployment-presenters"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { formatDeploymentTime, formatRelativeTime, renderSourceLabel, statusTone } from "@/components/app/deployment-presenters"
+import { Badge, Card, CardContent, CardHeader, CardTitle } from "@/components/ui"
 import { cn } from "@/lib/utils"
 
 export function DeploymentList(props: {
@@ -20,7 +20,6 @@ export function DeploymentList(props: {
           <Package className="size-5 text-primary" />
           Deployments
         </CardTitle>
-        <CardDescription>Newest first. Select a deployment to inspect its build and runtime.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 pt-3">
         {props.errorMessage ? (
@@ -45,7 +44,7 @@ export function DeploymentList(props: {
               type="button"
               onClick={() => props.onSelect(deployment.id)}
               className={cn(
-                "w-full rounded-xl border px-3 py-3 text-left transition-all",
+                "w-full rounded-md border px-3 py-3 text-left transition-all",
                 props.selectedDeploymentId === deployment.id
                   ? "border-primary/35 bg-primary/5 shadow-(--shadow-button)"
                   : "border-border/70 bg-background hover:border-border hover:bg-muted/30"
@@ -65,14 +64,14 @@ export function DeploymentList(props: {
                 </div>
                 <div className="text-right text-xs text-muted-foreground">
                   <div className="uppercase tracking-[0.16em]">{deployment.sourceType}</div>
-                  <div className="mt-1 normal-case">{formatDeploymentTime(deployment.createdAt)}</div>
+                  <div className="mt-1 normal-case">{formatRelativeTime(deployment.createdAt)}</div>
                 </div>
               </div>
               <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-[minmax(0,1fr)_auto]">
                 <div>
-                  <span className="block uppercase tracking-[0.16em]">route</span>
+                  <span className="block uppercase tracking-[0.16em]">deployed</span>
                   <span className="mt-1 block truncate font-medium text-foreground">
-                    {deployment.routePath ?? "pending"}
+                    {formatDeploymentTime(deployment.createdAt)}
                   </span>
                 </div>
                 <div>
