@@ -2,7 +2,7 @@ import { Package } from "lucide-react"
 
 import type { Deployment } from "@/api"
 import { EmptyState } from "@/components/app/empty-state"
-import { renderSourceLabel, statusTone } from "@/components/app/deployment-presenters"
+import { formatDeploymentTime, renderSourceLabel, statusTone } from "@/components/app/deployment-presenters"
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
 import { cn } from "@/lib/utils"
 
@@ -14,17 +14,15 @@ export function DeploymentList(props: {
   onSelect: (deploymentId: string) => void
 }) {
   return (
-    <Card className="surface-panel bg-card/80 backdrop-blur-sm">
-      <CardHeader>
+    <Card className="surface-panel border border-border/70 bg-card/90" size="sm">
+      <CardHeader className="border-b border-border/70">
         <CardTitle className="flex items-center gap-2 text-xl">
           <Package className="size-5 text-primary" />
-          Deployment queue
+          Deployments
         </CardTitle>
-        <CardDescription>
-          Newest first. Select one row to inspect its current state and logs.
-        </CardDescription>
+        <CardDescription>Newest first. Select a deployment to inspect its build and runtime.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="flex flex-col gap-2 pt-3">
         {props.errorMessage ? (
           <EmptyState
             title="Unable to load deployments"
@@ -47,37 +45,38 @@ export function DeploymentList(props: {
               type="button"
               onClick={() => props.onSelect(deployment.id)}
               className={cn(
-                "w-full rounded-[1.25rem] border px-4 py-4 text-left transition-all",
+                "w-full rounded-xl border px-3 py-3 text-left transition-all",
                 props.selectedDeploymentId === deployment.id
-                  ? "border-primary/40 bg-primary/5 shadow-(--shadow-button)"
-                  : "border-border/80 bg-background/60 hover:border-primary/20 hover:bg-background"
+                  ? "border-primary/35 bg-primary/5 shadow-(--shadow-button)"
+                  : "border-border/70 bg-background hover:border-border hover:bg-muted/30"
               )}
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0 space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium tracking-[-0.03em]">{deployment.id}</span>
-                    <Badge className={cn("capitalize shadow-none", statusTone[deployment.status])}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">{deployment.id}</span>
+                    <Badge className={cn("capitalize shadow-none", statusTone[deployment.status])} variant="outline">
                       {deployment.status}
                     </Badge>
                   </div>
-                  <p className="truncate text-sm text-muted-foreground">
+                  <p className="mt-1 truncate text-sm text-muted-foreground">
                     {renderSourceLabel(deployment)}
                   </p>
                 </div>
-                <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  {deployment.sourceType}
-                </span>
+                <div className="text-right text-xs text-muted-foreground">
+                  <div className="uppercase tracking-[0.16em]">{deployment.sourceType}</div>
+                  <div className="mt-1 normal-case">{formatDeploymentTime(deployment.createdAt)}</div>
+                </div>
               </div>
-              <div className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+              <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-[minmax(0,1fr)_auto]">
                 <div>
-                  <span className="block uppercase tracking-[0.18em]">route</span>
-                  <span className="mt-1 block font-medium text-foreground">
+                  <span className="block uppercase tracking-[0.16em]">route</span>
+                  <span className="mt-1 block truncate font-medium text-foreground">
                     {deployment.routePath ?? "pending"}
                   </span>
                 </div>
                 <div>
-                  <span className="block uppercase tracking-[0.18em]">image</span>
+                  <span className="block uppercase tracking-[0.16em]">image</span>
                   <span className="mt-1 block truncate font-medium text-foreground">
                     {deployment.imageTag ?? "not built yet"}
                   </span>

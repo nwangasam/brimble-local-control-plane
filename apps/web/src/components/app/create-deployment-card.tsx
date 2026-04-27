@@ -47,20 +47,20 @@ export function CreateDeploymentCard(props: {
     (props.sourceMode === "git" ? props.gitUrl.trim().length === 0 : !props.selectedFile)
 
   return (
-    <Card className="surface-panel-strong border-0 ring-1 ring-border/70">
-      <CardHeader className="gap-3">
+    <Card className="surface-panel border border-border/70 bg-card/90" size="sm">
+      <CardHeader className="gap-2">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <CardTitle className="text-xl">Create deployment</CardTitle>
-            <CardDescription className="mt-1 text-muted-foreground">
-              Git URL or uploaded project archive. No auth, no extra ceremony.
+            <CardTitle>New deployment</CardTitle>
+            <CardDescription className="mt-1">
+              Launch from a Git repository or uploaded archive.
             </CardDescription>
           </div>
-          <Badge className="bg-background/10 text-foreground shadow-none">API-first</Badge>
+          <Badge variant="outline" className="rounded-full shadow-none">Pipeline</Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="grid grid-cols-2 gap-2 rounded-2xl bg-background/5 p-1">
+      <CardContent className="flex flex-col gap-4">
+        <div className="grid grid-cols-2 gap-2 rounded-xl bg-muted/60 p-1">
           <ModeButton
             active={props.sourceMode === "git"}
             icon={GitBranch}
@@ -82,7 +82,7 @@ export function CreateDeploymentCard(props: {
               value={props.gitUrl}
               onChange={(event) => props.onGitUrlChange(event.target.value)}
               placeholder="https://github.com/owner/repo"
-              className="border-border/60 bg-background/5 text-foreground placeholder:text-muted-foreground"
+              className="border-border/70 bg-background"
             />
           </label>
         ) : (
@@ -92,7 +92,7 @@ export function CreateDeploymentCard(props: {
               type="file"
               accept=".zip"
               onChange={(event) => props.onFileChange(event.target.files?.[0] ?? null)}
-              className="border-border/60 bg-background/5 text-foreground file:mr-4 file:border-0 file:bg-background file:px-3 file:py-1.5 file:text-sm file:text-foreground"
+              className="border-border/70 bg-background text-foreground file:mr-4 file:border-0 file:bg-background file:px-3 file:py-1.5 file:text-sm file:text-foreground"
             />
             <p className="text-xs text-muted-foreground">
               Upload support is intentionally narrow: `.zip` only, per the project scope.
@@ -100,16 +100,16 @@ export function CreateDeploymentCard(props: {
           </label>
         )}
 
-        <div className="space-y-2 rounded-[1rem] border border-border/60 bg-background/5 px-4 py-3">
-          <p className="text-sm text-foreground">Execution note</p>
-          <p className="text-sm leading-6 text-muted-foreground">
+        <div className="rounded-xl border border-border/70 bg-muted/35 px-3 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Execution note</p>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
             First-time Railpack builds may look quiet for a short period while builder and runtime
             images are pulled.
           </p>
         </div>
 
         <div className="flex items-center justify-between gap-3">
-          <p className="max-w-xs text-xs leading-6 text-muted-foreground">
+          <p className="max-w-xs text-xs leading-5 text-muted-foreground">
             First build can look quiet while Railpack pulls its base images. The API now emits
             verbose Railpack logs so the operator can see real progress.
           </p>

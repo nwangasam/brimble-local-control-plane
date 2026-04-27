@@ -62,25 +62,24 @@ function App() {
 
   return (
     <AppShell metrics={metrics} theme={theme} onToggleTheme={toggleTheme}>
-      <CreateDeploymentCard
-        sourceMode={sourceMode}
-        gitUrl={gitUrl}
-        selectedFile={selectedFile}
-        isPending={createDeploymentMutation.isPending}
-        errorMessage={createErrorMessage}
-        onSourceModeChange={setSourceMode}
-        onGitUrlChange={setGitUrl}
-        onFileChange={setSelectedFile}
-        onSubmit={() =>
-          createDeploymentMutation.mutate(
-            sourceMode === "git"
-              ? { sourceMode, gitUrl }
-              : { sourceMode, file: selectedFile }
-          )
-        }
-      />
-
-      <section className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
+      <div className="flex flex-col gap-4">
+        <CreateDeploymentCard
+          sourceMode={sourceMode}
+          gitUrl={gitUrl}
+          selectedFile={selectedFile}
+          isPending={createDeploymentMutation.isPending}
+          errorMessage={createErrorMessage}
+          onSourceModeChange={setSourceMode}
+          onGitUrlChange={setGitUrl}
+          onFileChange={setSelectedFile}
+          onSubmit={() =>
+            createDeploymentMutation.mutate(
+              sourceMode === "git"
+                ? { sourceMode, gitUrl }
+                : { sourceMode, file: selectedFile }
+            )
+          }
+        />
         <DeploymentList
           deployments={deploymentsQuery.data ?? []}
           isLoading={deploymentsQuery.isLoading}
@@ -94,22 +93,23 @@ function App() {
           selectedDeploymentId={selectedDeploymentId}
           onSelect={setSelectedDeploymentId}
         />
-        <DeploymentDetail
-          deployment={selectedDeploymentQuery.data}
-          logs={liveLogsState.logs}
-          streamConnected={liveLogsState.connected}
-          isLoading={selectedDeploymentQuery.isLoading || selectedLogsQuery.isLoading}
-          errorMessage={
-            selectedDeploymentQuery.error instanceof Error
-              ? selectedDeploymentQuery.error.message
-              : selectedLogsQuery.error instanceof Error
-                ? selectedLogsQuery.error.message
-                : selectedDeploymentQuery.error || selectedLogsQuery.error
-                  ? "Unable to load deployment detail."
-                  : null
-          }
-        />
-      </section>
+      </div>
+
+      <DeploymentDetail
+        deployment={selectedDeploymentQuery.data}
+        logs={liveLogsState.logs}
+        streamConnected={liveLogsState.connected}
+        isLoading={selectedDeploymentQuery.isLoading || selectedLogsQuery.isLoading}
+        errorMessage={
+          selectedDeploymentQuery.error instanceof Error
+            ? selectedDeploymentQuery.error.message
+            : selectedLogsQuery.error instanceof Error
+              ? selectedLogsQuery.error.message
+              : selectedDeploymentQuery.error || selectedLogsQuery.error
+                ? "Unable to load deployment detail."
+                : null
+        }
+      />
     </AppShell>
   )
 }
